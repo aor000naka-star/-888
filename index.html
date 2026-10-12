@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมการเชิงเส้นตัวแปรเดียว ม.1 - Fantasy Math Adventure</title>
+    <style>
+        :root {
+            --bg-dark: #1a2a3a;
+            --text-light: #e0f2f1;
+            --modal-bg: rgba(20, 35, 50, 0.97);
+            --primary-accent: #a8e6cf;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Sarabun:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at center, #2c3e50 0%, #1a2a3a 100%);
+            overflow: hidden;
+        }
+
+        .game-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: #a8e6cf;
+            text-shadow: 0 0 10px rgba(168, 230, 207, 0.5), 2px 2px 4px #000;
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .game-subtitle {
+            font-size: 1.5rem;
+            color: #dcedc1;
+            margin-top: -10px;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+            width: 300px;
+        }
+
+        .menu-btn {
+            width: 100%;
+            padding: 15px 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: 2px solid #263238;
+            border-radius: 30px;
+            text-shadow: 1px 1px 2px #000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.2);
+        }
+
+        .btn-play {
+            background: linear-gradient(to bottom, #81c784, #388e3c);
+            color: #fff;
+            font-size: 1.8rem;
+            padding: 20px;
+            border-radius: 40px;
+        }
+        
+        .btn-play:hover {
+            background: linear-gradient(to bottom, #a5d6a7, #4caf50);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(to bottom, #90a4ae, #546e7a);
+            color: #eceff1;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(to bottom, #b0bec5, #78909c);
+            transform: scale(1.02);
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            color: var(--text-light);
+            padding: 2.5rem 2rem;
+            border: 2px solid #546e7a;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 950px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.9);
+        }
+        
+        .close-btn {
+            color: #a8e6cf;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .close-btn:hover { color: #fff; }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            color: #a8e6cf;
+            border-bottom: 2px solid #546e7a;
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-size: 2rem;
+        }
+
+        .content-box {
+            background: rgba(255,255,255,0.04);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #a8e6cf;
+        }
+
+        .highlight { color: #dcedc1; font-weight: bold; }
+
+        /* การ์ตูนน่ารักๆ ใน MEAN & EXAMPLE */
+        .cartoon-banner {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: rgba(168, 230, 207, 0.1);
+            padding: 1.2rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(168, 230, 207, 0.3);
+        }
+
+        .avatar {
+            font-size: 3.2rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .bubble {
+            background: #fff;
+            color: #1a2a3a;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            position: relative;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Interactive Box in Mean */
+        .interactive-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px dashed #a8e6cf;
+        }
+
+        .controls { flex: 1; min-width: 280px; }
+        .slider-group { margin-bottom: 1.2rem; }
+        .slider-group label { display: block; font-weight: bold; margin-bottom: 0.5rem; color: #dcedc1; }
+        input[type=range] { width: 100%; accent-color: #a8e6cf; cursor: pointer; }
+        
+        .equation-display {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed #a8e6cf;
+            border-radius: 8px;
+            color: #a8e6cf;
+            font-family: monospace;
+        }
+
+        .step-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 1rem;
+            color: #fff;
+            border-left: 3px solid #ffba08;
+        }
+
+        .graph-container { flex: 1; min-width: 280px; text-align: center; }
+        canvas { background-color: #ffffff; border: 2px solid #546e7a; border-radius: 8px; max-width: 100%; }
+
+        /* Quiz Styles */
+        .quiz-question { font-size: 1.2rem; margin-bottom: 1.5rem; color: #fff; }
+        .modal-option {
+            display: block;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid #546e7a;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+        .modal-option:hover { background-color: rgba(255, 255, 255, 0.2); border-color: #a8e6cf; }
+        .modal-option.correct { background-color: rgba(76, 175, 80, 0.6); border-color: #4caf50; }
+        .modal-option.incorrect { background-color: rgba(244, 67, 54, 0.6); border-color: #f44336; }
+
+        .feedback-box { display: none; margin-top: 15px; padding: 15px; border-radius: 8px; background: rgba(0,0,0,0.4); }
+
+        .next-btn {
+            background: linear-gradient(to bottom, #81c784, #388e3c);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* เอฟเฟกต์ผีโผล่ตอนตอบผิด (Ghost Pop-up) */
+        #ghost-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: shake 0.3s ease-in-out;
+        }
+        .ghost-box {
+            font-size: 8rem;
+            text-align: center;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .ghost-text {
+            color: #ff5252;
+            font-size: 2.5rem;
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 10px #000;
+            margin-top: 10px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-15px); }
+            75% { transform: translateX(15px); }
+        }
+        @keyframes popUp {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* เอฟเฟกต์พลุพลังตอนตอบถูก */
+        .firework-fx {
+            position: absolute;
+            font-size: 3rem;
+            animation: flyUp 0.8s ease-out forwards;
+            pointer-events: none;
+            z-index: 2000;
+        }
+        @keyframes flyUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-120px) scale(1.5); opacity: 0; }
+        }
+
+        .firefly {
+            position: absolute; width: 4px; height: 4px; background: #a8e6cf; border-radius: 50%;
+            box-shadow: 0 0 10px 2px #a8e6cf; animation: fly linear infinite; opacity: 0; z-index: -1;
+        }
+        @keyframes fly {
+            0% { transform: translate(0, 0); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="fireflies-container"></div>
+
+    <!-- หน้าต่างผีหลอกตอนตอบผิด -->
+    <div id="ghost-overlay" onclick="hideGhost()">
+        <div>
+            <div class="ghost-box">👻😱</div>
+            <div class="ghost-text">บู๊ววว! ผิดซะแล้ว ลองใหม่นะ!</div>
+        </div>
+    </div>
+
+    <div class="game-title">
+        สมการเชิงเส้น<br>ตัวแปรเดียว
+        <div class="game-subtitle">มัธยมศึกษาปีที่ 1</div>
+    </div>
+
+    <div class="menu-container">
+        <button class="menu-btn btn-play" onclick="playSound('click'); openModal('modal-play')">Play</button>
+        <button class="menu-btn btn-secondary" onclick="playSound('click'); openModal('modal-mean')">Mean</button>
+        <button class="menu-btn btn-secondary" onclick="playSound('click'); openModal('modal-example')">Example</button>
+    </div>
+
+    <!-- Modal: Play -->
+    <div id="modal-play" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="playSound('click'); closeModal('modal-play')">&times;</span>
+            <h2 class="modal-title" id="quiz-title">ด่านทดสอบความรู้</h2>
+            
+            <div id="quiz-content" class="quiz-question-container">
+                <div id="modal-question" class="quiz-question">คำถามจะแสดงที่นี่</div>
+                <div id="modal-options"></div>
+                <div id="modal-feedback" class="feedback-box"></div>
+                <button id="next-btn" class="next-btn" onclick="playSound('click'); nextQuestion()">ข้อต่อไป</button>
+            </div>
+
+            <div id="score-display" style="display:none; text-align:center;">
+                <h2>จบการทดสอบ!</h2>
+                <p>คะแนนที่ได้</p>
+                <h1 id="final-score" style="color:#a8e6cf; font-size:3rem; margin:10px 0;">0 / 5</h1>
+                <p id="score-message"></p>
+                <button class="menu-btn btn-secondary" style="margin-top:20px; font-size:1rem; padding:10px; width:auto;" onclick="playSound('click'); closeModal('modal-play')">กลับสู่เมนูหลัก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Mean (พร้อมการ์ตูนน่ารัก) -->
+    <div id="modal-mean" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="playSound('click'); closeModal('modal-mean')">&times;</span>
+            <h2 class="modal-title">ความหมาย สมบัติ & กราฟสมการ</h2>
+            
+            <div class="cartoon-banner">
+                <div class="avatar">🦉</div>
+                <div class="bubble">ฮูกน้อยผู้รอบรู้ยินดีต้อนรับ! มาเรียนรู้ความหมายและสมบัติของสมการกันเถอะ ฮูก! 📚✨</div>
+            </div>
+
+            <div class="content-box">
+                <h3>1. ความหมายและรูปทั่วไป</h3>
+                <p><span class="highlight">สมการเชิงเส้นตัวแปรเดียว</span> คือ ประโยคสัญลักษณ์ที่มีเครื่องหมายเท่ากับ (=) มีตัวแปรเพียง 1 ตัว และตัวแปรนั้นมีเลขชี้กำลังสูงสุดเท่ากับ 1 เสมอ</p>
+                <p><strong>รูปทั่วไป:</strong> <span class="highlight">ax + b = 0</span> (เมื่อ a ≠ 0)</p>
+            </div>
+
+            <div class="content-box">
+                <h3>2. สมบัติของการเท่ากัน (เครื่องมือช่วยแก้สมการ)</h3>
+                <p>เปรียบเสมือน "ตาชั่งสองแขน" ที่ต้องสมดุลกันเสมอ</p>
+                <ul>
+                    <li><strong>สมบัติสมมาตร:</strong> สลับฝั่งซ้ายขวาได้ (a = b แล้ว b = a)</li>
+                    <li><strong>สมบัติถ่ายทอด:</strong> ถ้า a = b และ b = c แล้ว a = c</li>
+                    <li><strong>สมบัติการบวก:</strong> บวกหรือลบด้วยตัวเลขเดียวกันทั้งสองข้าง</li>
+                    <li><strong>สมบัติการคูณ:</strong> คูณหรือหารด้วยตัวเลขเดียวกันทั้งสองข้าง (ตัวหารต้องไม่เป็นศูนย์)</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h3>3. สื่อจำลองกราฟและขั้นตอนแก้สมการแบบ Real-time</h3>
+                <div class="interactive-box">
+                    <div class="controls">
+                        <div class="slider-group">
+                            <label>ค่า a (สัมประสิทธิ์หน้า x): <span id="val-a">2</span></label>
+                            <input type="range" id="slider-a" min="-10" max="10" step="1" value="2">
+                        </div>
+                        <div class="slider-group">
+                            <label>ค่า b (ค่าคงตัว): <span id="val-b">-4</span></label>
+                            <input type="range" id="slider-b" min="-20" max="20" step="1" value="-4">
+                        </div>
+
+                        <div class="equation-display" id="eq-display">2x - 4 = 0</div>
+                        <div class="step-box" id="step-box"></div>
+                    </div>
+
+                    <div class="graph-container">
+                        <canvas id="graphCanvas" width="340" height="340"></canvas>
+                        <p style="font-size: 0.85rem; color: #a8e6cf; margin-top: 5px;">กราฟเส้นตรง y = ax + b</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Example (พร้อมการ์ตูนน่ารัก) -->
+    <div id="modal-example" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="playSound('click'); closeModal('modal-example')">&times;</span>
+            <h2 class="modal-title">เปลี่ยนภาษาคน เป็นภาษาคณิตศาสตร์</h2>
+            
+            <div class="cartoon-banner">
+                <div class="avatar">🦊</div>
+                <div class="bubble">พี่จิ้งจอกสุดเท่ จะพาแปลงโจทย์ปัญหาในชีวิตประจำวัน ให้เป็นสมการง่ายๆ เอง ตามมาเลย! 🌟</div>
+            </div>
+
+            <div class="content-box">
+                <h4 style="color: #a8e6cf; margin-top: 0;">🛍️ สถานการณ์ที่ 1: การซื้อของ</h4>
+                <p><strong>โจทย์:</strong> "ซื้อขนม 2 ห่อ จ่ายแบงก์ 50 บาท ได้เงินทอน 10 บาท ขนมราคาห่อละเท่าไร?"</p>
+                <p style="color: #ffba08;"><strong>สมการ: 2x + 10 = 50</strong></p>
+            </div>
+
+            <div class="content-box">
+                <h4 style="color: #a8e6cf; margin-top: 0;">💰 สถานการณ์ที่ 2: เงินสะสม</h4>
+                <p><strong>โจทย์:</strong> "ฉันมีเงินอยู่จำนวนหนึ่ง พ่อให้อีก 20 บาท ทำให้ฉันมีเงินรวม 100 บาท ฉันมีเงินตอนแรกกี่บาท?"</p>
+                <p style="color: #ffba08;"><strong>สมการ: x + 20 = 100</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ระบบเสียงเอฟเฟกต์ด้วย Web Audio API (ไม่ต้องใช้ไฟล์เสียงภายนอก) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            let now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'correct') {
+                // เสียงพลังเยייה (ทิตนอร์ดสูงสดใส)
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'wrong') {
+                // เสียงผีหลอก (ต่ำสั่นน่ากลัว)
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.5);
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        }
+
+        // --- Modal Control ---
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            if(modalId === 'modal-play') {
+                resetGame();
+            } else if(modalId === 'modal-mean') {
+                updateInteractive();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+
+        // --- Interactive Graph & Steps Logic ---
+        const sliderA = document.getElementById('slider-a');
+        const sliderB = document.getElementById('slider-b');
+        const valA = document.getElementById('val-a');
+        const valB = document.getElementById('val-b');
+        const eqDisplay = document.getElementById('eq-display');
+        const stepBox = document.getElementById('step-box');
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function updateInteractive() {
+            let a = parseInt(sliderA.value);
+            let b = parseInt(sliderB.value);
+
+            if (a === 0) { a = 1; sliderA.value = 1; }
+
+            valA.textContent = a;
+            valB.textContent = b;
+
+            let bStr = b < 0 ? `- ${Math.abs(b)}` : `+ ${b}`;
+            if (b === 0) bStr = '';
+            eqDisplay.textContent = `${a}x ${bStr} = 0`;
+
+            let stepsHTML = `<strong>ขั้นตอนการแก้:</strong><br>1) ${a}x ${bStr} = 0<br>`;
+            if (b !== 0) stepsHTML += `2) ${a}x = ${-b} (สมบัติการบวก/ลบ)<br>`;
+            if (a !== 1) stepsHTML += `3) x = ${-b} / ${a} (สมบัติการคูณ/หาร)<br>`;
+            let finalAns = (-b / a);
+            stepsHTML += `<strong style="color:#ffba08;">คำตอบ: x = ${finalAns % 1 === 0 ? finalAns : finalAns.toFixed(2)}</strong>`;
+            
+            stepBox.innerHTML = stepsHTML;
+            drawGraph(a, b, finalAns);
+        }
+
+        function drawGraph(a, b, ans) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let width = canvas.width, height = canvas.height;
+            let originX = width / 2, originY = height / 2, scale = 14; 
+
+            ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1;
+            for(let i=0; i<width; i+=scale) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(width, i); ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(width, originY); ctx.stroke(); 
+            ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, height); ctx.stroke(); 
+
+            ctx.strokeStyle = '#d32f2f'; ctx.lineWidth = 3;
+            ctx.beginPath();
+            for(let px = 0; px <= width; px++) {
+                let graphX = (px - originX) / scale; 
+                let graphY = (a * graphX) + b;
+                let py = originY - (graphY * scale); 
+                if(px === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            let pxAns = originX + (ans * scale);
+            ctx.fillStyle = '#b71c1c';
+            ctx.beginPath(); ctx.arc(pxAns, originY, 5, 0, Math.PI*2); ctx.fill();
+        }
+
+        sliderA.addEventListener('input', updateInteractive);
+        sliderB.addEventListener('input', updateInteractive);
+
+        // --- Quiz Game Logic ---
+        const questionsData = [
+            {
+                q: "ข้อใดคือสมการเชิงเส้นตัวแปรเดียว?",
+                opts: [
+                    { t: "ก. 2x + 1 = 5", c: true, f: "ถูกต้อง! มีตัวแปรเดียวคือ x และเลขชี้กำลังเป็น 1" },
+                    { t: "ข. x² = 4", c: false, f: "ผิดจ้า x² มีเลขชี้กำลังเป็น 2" },
+                    { t: "ค. x + y = 3", c: false, f: "ผิดจ้า ข้อนี้มี 2 ตัวแปร" },
+                    { t: "ง. 5 > 3", c: false, f: "ผิดจ้า เครื่องหมาย > คืออสมการ" }
+                ]
+            },
+            {
+                q: "รูปทั่วไปของสมการเชิงเส้นตัวแปรเดียวคือข้อใด?",
+                opts: [
+                    { t: "ก. ax + by = 0", c: false, f: "ผิดจ้า มีสองตัวแปร" },
+                    { t: "ข. ax² + bx + c = 0", c: false, f: "ผิดจ้า นี่คือสมการกำลังสอง" },
+                    { t: "ค. ax + b = 0", c: true, f: "ยอดเยี่ยม! นี่คือรูปทั่วไปเมื่อ a ≠ 0" },
+                    { t: "ง. a + b = c", c: false, f: "ผิดจ้า ไม่มีตัวแปรเลย" }
+                ]
+            },
+            {
+                q: "จากสมการ x - 5 = 10 ต้องทำอย่างไรเพื่อหาค่า x?",
+                opts: [
+                    { t: "ก. นำ 5 มาลบทั้งสองข้าง", c: false, f: "จะกลายเป็น x - 10 = 5 นะ" },
+                    { t: "ข. นำ 5 มาบวกทั้งสองข้าง", c: true, f: "เยี่ยม! กำจัด -5 ด้วยการบวก 5 ทั้งสองข้าง" },
+                    { t: "ค. นำ 5 มาคูณทั้งสองข้าง", c: false, f: "ยิ่งทำให้ซับซ้อน" },
+                    { t: "ง. ใช้สมบัติสมมาตร", c: false, f: "สลับซ้ายขวาไม่ช่วยหาค่า x" }
+                ]
+            },
+            {
+                q: "คำตอบของสมการ 2x + 4 = 10 คือข้อใด?",
+                opts: [
+                    { t: "ก. 2", c: false, f: "2(2)+4 = 8" },
+                    { t: "ข. 3", c: true, f: "ถูกต้อง! 2x = 6 -> x = 3" },
+                    { t: "ค. 4", c: false, f: "2(4)+4 = 12" },
+                    { t: "ง. 6", c: false, f: "2(6)+4 = 16" }
+                ]
+            },
+            {
+                q: "ถ้า 3x = 15 แล้ว x มีค่าเท่าใด?",
+                opts: [
+                    { t: "ก. 3", c: false, f: "3(3) = 9" },
+                    { t: "ข. 5", c: true, f: "ถูกต้อง! นำ 3 ไปหาร 15 ได้ x = 5" },
+                    { t: "ค. 12", c: false, f: "3(12) = 36" },
+                    { t: "ง. 45", c: false, f: "นั่นคือเอาไปคูณ ต้องเอาไปหารนะ" }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0, userScore = 0, hasAnsweredCurrent = false;
+
+        function resetGame() {
+            currentQuestionIndex = 0; userScore = 0;
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('score-display').style.display = 'none';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnsweredCurrent = false;
+            let qData = questionsData[currentQuestionIndex];
+            document.getElementById('quiz-title').innerText = `ด่านทดสอบที่ ${currentQuestionIndex + 1} / ${questionsData.length}`;
+            document.getElementById('modal-question').innerText = qData.q;
+            
+            let optContainer = document.getElementById('modal-options');
+            optContainer.innerHTML = '';
+            document.getElementById('modal-feedback').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            
+            qData.opts.forEach((opt) => {
+                let div = document.createElement('div');
+                div.className = 'modal-option';
+                div.innerText = opt.t;
+                div.onclick = () => selectAnswer(div, opt.c, opt.f);
+                optContainer.appendChild(div);
+            });
+        }
+
+        function selectAnswer(selectedDiv, isCorrect, feedbackText) {
+            if(hasAnsweredCurrent) return;
+            hasAnsweredCurrent = true;
+            
+            let allOptions = document.getElementById('modal-options').children;
+            for(let i=0; i<allOptions.length; i++) allOptions[i].style.opacity = '0.5';
+            selectedDiv.style.opacity = '1';
+            
+            let feedbackBox = document.getElementById('modal-feedback');
+
+            if(isCorrect) {
+                playSound('correct');
+                showFireworks(selectedDiv);
+                selectedDiv.classList.add('correct');
+                feedbackBox.style.color = '#a5d6a7';
+                feedbackBox.innerHTML = `<strong>✨ พลังเวทย์พุ่งพล่าน! ถูกต้อง!</strong> ${feedbackText}`;
+                userScore++;
+            } else {
+                playSound('wrong');
+                showGhost(); // ผีโผล่ตอนตอบผิด
+                selectedDiv.classList.add('incorrect');
+                feedbackBox.style.color = '#ef9a9a';
+                feedbackBox.innerHTML = `<strong>❌ อูย... ผิดจ้า!</strong> ${feedbackText}`;
+                
+                let qData = questionsData[currentQuestionIndex];
+                for(let i=0; i<allOptions.length; i++) {
+                    if(qData.opts[i].c) {
+                        allOptions[i].style.opacity = '1';
+                        allOptions[i].style.border = '1px solid #4caf50';
+                    }
+                }
+            }
+            
+            feedbackBox.style.display = 'block';
+            let nextBtn = document.getElementById('next-btn');
+            nextBtn.innerText = (currentQuestionIndex === questionsData.length - 1) ? "ดูคะแนนรวม" : "ข้อต่อไป ➔";
+            nextBtn.style.display = 'inline-block';
+        }
+
+        function showGhost() {
+            document.getElementById('ghost-overlay').style.display = 'flex';
+        }
+        function hideGhost() {
+            document.getElementById('ghost-overlay').style.display = 'none';
+        }
+
+        function showFireworks(el) {
+            let rect = el.getBoundingClientRect();
+            for(let i=0; i<5; i++) {
+                let fx = document.createElement('div');
+                fx.className = 'firework-fx';
+                fx.innerHTML = ['💥', '✨', '⭐', '💫'][Math.floor(Math.random()*4)];
+                fx.style.left = (rect.left + Math.random() * rect.width) + 'px';
+                fx.style.top = rect.top + 'px';
+                document.body.appendChild(fx);
+                setTimeout(() => fx.remove(), 800);
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if(currentQuestionIndex < questionsData.length) loadQuestion();
+            else showScore();
+        }
+
+        function showScore() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('score-display').style.display = 'block';
+            document.getElementById('quiz-title').innerText = "ผลการทดสอบ";
+            document.getElementById('final-score').innerText = `${userScore} / ${questionsData.length}`;
+            
+            let msg = document.getElementById('score-message');
+            if(userScore === questionsData.length) msg.innerText = "🔥🔥 สุดยอดนักเวทย์คณิตศาสตร์ระดับปรมาจารย์! 🔥🔥";
+            else if (userScore >= 3) msg.innerText = "เก่งมาก ผ่านด่านเวทย์มนตร์ได้สบาย!";
+            else msg.innerText = "พยายามอีกนิดนะ ลองทบทวนใน Mean ดูใหม่สู้ๆ!";
+        }
+
+        // Fireflies background
+        const container = document.getElementById('fireflies-container');
+        for (let i = 0; i < 30; i++) {
+            let firefly = document.createElement('div');
+            firefly.classList.add('firefly');
+            firefly.style.left = `${Math.random() * 100}vw`;
+            firefly.style.top = `${Math.random() * 100}vh`;
+            firefly.style.setProperty('--tx', `${(Math.random() - 0.5) * 200}px`);
+            firefly.style.setProperty('--ty', `${(Math.random() - 0.5) * 200}px`);
+            firefly.style.animationDuration = `${Math.random() * 5 + 3}s`;
+            firefly.style.animationDelay = `${Math.random() * 5}s`;
+            container.appendChild(firefly);
+        }
+    </script>
+</body>
+</html>
